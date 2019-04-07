@@ -1,0 +1,12 @@
+#文件夹
+.vs
+__pycache__
+
+#额外文件
+*.zip
+
+#生成的文件
+*.pyc
+*.topic
+*.dev.txt
+vocab.txt
