@@ -6,13 +6,13 @@
 : @echo off
 
 : set gpu id to use
-set CUDA_VISIBLE_DEVICES=0
+set /M CUDA_VISIBLE_DEVICES=0
 
 : generalizes target_a/target_b of goal for all outputs, replaces them with slot mark
 set TOPIC_GENERALIZATION=1
 
 : set python path according to your actual environment
-set pythonpath='python'
+set pythonpath=python
 
 : the prefix of the file name used by the model, must be consistent with the configuration in network.py
 set prefix=demo
@@ -31,6 +31,9 @@ set vocabpath=%datapath%/vocab.txt
 : datatype = "train" or "dev"
 set datatype=train dev
 
+: 启用延迟环境变量
+setlocal enabledelayedexpansion
+
 : data preprocessing
 : 形式变量为单个字符
 for %%d in (%datatype%) do (
@@ -48,14 +51,14 @@ for %%d in (%datatype%) do (
     set topic_file=%datapath%/%prefix%.%%d.topic
 
     : step 1: firstly have to convert session data to sample data
-    python ./tools/convert_session_to_sample.py %corpus_file% %sample_file%
+    %pythonpath% ./tools/convert_session_to_sample.py !corpus_file! !sample_file!
 
     : step 2: convert sample data to text data required by the model
-    python ./tools/convert_conversation_corpus_to_model_text.py %sample_file% %text_file% %topic_file% %TOPIC_GENERALIZATION%
+    %pythonpath% ./tools/convert_conversation_corpus_to_model_text.py !sample_file! !text_file! !topic_file! %TOPIC_GENERALIZATION%
 
     : step 3: build vocabulary from the training data
     if %%d == train (
-        python ./tools/build_vocabulary.py %text_file% %vocabpath%
+        %pythonpath% ./tools/build_vocabulary.py !text_file! %vocabpath%
     )
 )
 
@@ -64,7 +67,7 @@ copy /Y %datapath%\%prefix%.dev %datapath%\%prefix%.test
 
 : step 5: train model in two stage, you can find the model file in ./models/ after training
 : step 5.1: stage 0, you can get model_stage_0.npz and opt_state_stage_0.npz in save_dir after stage 0
-python -u network.py --run_type train ^
+%pythonpath% -u network.py --run_type train ^
                             --stage 0 ^
                             --use_gpu True ^
                             --pretrain_epoch 5 ^
@@ -75,7 +78,7 @@ python -u network.py --run_type train ^
                             --embed_file ./data/sgns.weibo.300d.txt
 
 : step 5.2: stage 1, init the model and opt state using the result of stage 0 and train the model
-python -u network.py --run_type train ^
+%pythonpath% -u network.py --run_type train ^
                             --stage 1 ^
                             --use_gpu True ^
                             --init_model ./models/model_stage_0.npz ^
