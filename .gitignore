@@ -1,12 +1,10 @@
 #文件夹
 .vs
+.vscode
 __pycache__
+data
+models
 
-#额外文件
-*.zip
-
-#生成的文件
+#文件
 *.pyc
-*.topic
-*.dev.txt
-vocab.txt
+log.txt
