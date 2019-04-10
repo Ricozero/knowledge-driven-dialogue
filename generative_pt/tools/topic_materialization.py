@@ -16,12 +16,12 @@ def topic_materialization(input_file, output_file, topic_file):
     """
     topic_materialization
     """
-    inputs = [line.strip() for line in open(input_file, 'r')]
-    topics = [line.strip() for line in open(topic_file, 'r')]
+    inputs = [line.strip() for line in open(input_file, 'r', encoding = 'utf-8')]
+    topics = [line.strip() for line in open(topic_file, 'r', encoding = 'utf-8')]
 
     assert len(inputs) == len(topics)
 
-    fout = open(output_file, 'w')
+    fout = open(output_file, 'w', encoding = 'utf-8')
     for i, text in enumerate(inputs):
         topic_dict = json.loads(topics[i], encoding="utf-8")
         topic_list = sorted(topic_dict.items(), key=lambda item: len(item[1]), reverse=True)

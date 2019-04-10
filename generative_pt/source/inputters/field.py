@@ -215,7 +215,7 @@ class TextField(Field):
         else:
             cover = 0
             print("Building word embeddings from '{}' ...".format(embed_file))
-            with open(embed_file, "r") as f:
+            with open(embed_file, "r", encoding = 'utf-8') as f:
                 num, dim = map(int, f.readline().strip().split())
                 embeds = [[0] * dim] * len(self.stoi)
                 for line in f:

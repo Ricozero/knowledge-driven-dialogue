@@ -23,7 +23,7 @@ def load_dict(vocab_dict):
     load vocabulary dict
     """
     idx = 0
-    for line in open(vocab_dict): 
+    for line in open(vocab_dict, encoding = 'utf-8'): 
         line = line.strip()
         VOC_DICT[line] = idx
         idx += 1
@@ -124,7 +124,7 @@ class DataProcessor(object):
     @classmethod
     def _read_data(cls, input_file):
         """Reads a tab separated value file."""
-        with open(input_file, "r") as f:
+        with open(input_file, "r", encoding = 'utf-8') as f:
             lines = []
             for line in f:
                 line = line.rstrip('\n').split('\t')

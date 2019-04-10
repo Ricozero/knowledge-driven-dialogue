@@ -81,12 +81,12 @@ def main(args):
 
     processor, test_data = build_data(args)
 
-    args.voc_size = len(open(args.vocab_path, 'r').readlines())
+    args.voc_size = len(open(args.vocab_path, 'r', encoding = 'utf-8').readlines())
     num_labels = len(processor.get_labels())
 
     retrieval_model = build_model(args, num_labels)
 
-    out_scores = open(args.output, 'w')
+    out_scores = open(args.output, 'w', encoding = 'utf-8')
     test_data_generator, num_test_examples = test_data
     for batch_id, data in enumerate(test_data_generator()):
         inputs, _ = data["inputs"]

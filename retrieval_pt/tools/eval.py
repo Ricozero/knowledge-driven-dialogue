@@ -149,7 +149,7 @@ def calc_f1(data):
 
 eval_file = sys.argv[1]
 sents = []
-for line in open(eval_file):
+for line in open(eval_file, encoding = 'utf-8'):
     tk = line.strip().split("\t")
     if len(tk) < 2:
         continue

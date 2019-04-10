@@ -18,7 +18,7 @@ def build_dict(corpus_file, dict_file):
     """
     dict = {}
     max_frequency = 1
-    for line in open(corpus_file, 'r'):
+    for line in open(corpus_file, 'r', encoding = 'utf-8'):
         conversation = line.strip().split('\t')
         for i in range(1, len(conversation), 1):
             words = conversation[i].split(' ')
@@ -37,7 +37,7 @@ def build_dict(corpus_file, dict_file):
 
     words = sorted(dict.items(), key=lambda item: item[1], reverse=True)
 
-    fout = open(dict_file, 'w')
+    fout = open(dict_file, 'w', encoding = 'utf-8')
     for word, frequency in words:
         fout.write(word + '\n')
 

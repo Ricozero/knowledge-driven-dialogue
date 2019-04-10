@@ -18,8 +18,8 @@ def convert_session_to_sample(session_file, sample_file):
     """
     convert_session_to_sample
     """
-    fout = open(sample_file, 'w')
-    with open(session_file, 'r') as f:
+    fout = open(sample_file, 'w', encoding = 'utf-8')
+    with open(session_file, 'r', encoding = 'utf-8') as f:
         for i, line in enumerate(f):
             session = json.loads(line.strip(), encoding="utf-8", \
                                       object_pairs_hook=collections.OrderedDict)

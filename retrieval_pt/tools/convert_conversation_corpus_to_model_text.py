@@ -162,8 +162,8 @@ def convert_conversation_corpus_to_model_text(corpus_file, text_file,
     """
     convert conversation corpus to model text
     """
-    fout_text = open(text_file, 'w')
-    with open(corpus_file, 'r') as f:
+    fout_text = open(text_file, 'w', encoding = 'utf-8')
+    with open(corpus_file, 'r', encoding = 'utf-8') as f:
         for i, line in enumerate(f):
             model_text, _ = preprocessing_for_one_conversation(
                 line.strip(), candidate_num=0,

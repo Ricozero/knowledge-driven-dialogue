@@ -44,8 +44,8 @@ def construct_candidate_for_corpus(corpus_file, candidate_file, candidate_num=10
                       "我 说 的 是 休 · 劳瑞 。"]
     }
     """
-    fout_text = open(candidate_file, 'w')
-    with open(corpus_file, 'r') as f:
+    fout_text = open(candidate_file, 'w', encoding = 'utf-8')
+    with open(corpus_file, 'r', encoding = 'utf-8') as f:
         for i, line in enumerate(f):
             conversation = json.loads(line.strip(), encoding="utf-8", \
                                  object_pairs_hook=collections.OrderedDict)

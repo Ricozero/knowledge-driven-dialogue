@@ -188,7 +188,7 @@ def main():
         logger.addHandler(fh)
         # Save config
         params_file = os.path.join(config.save_dir, "params.json")
-        with open(params_file, 'w') as fp:
+        with open(params_file, 'w', encoding = 'utf-8') as fp:
             json.dump(config.__dict__, fp, indent=4, sort_keys=True)
         print("Saved params to '{}'".format(params_file))
         logger.info(model)

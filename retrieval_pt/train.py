@@ -202,7 +202,7 @@ def main(args):
 
     processor, [train_data, dev_data], warmup_steps = build_data(args)
 
-    args.voc_size = len(open(args.vocab_path, 'r').readlines())
+    args.voc_size = len(open(args.vocab_path, 'r', encoding = 'utf-8').readlines())
     num_labels = len(processor.get_labels())
 
     checkpoint = None

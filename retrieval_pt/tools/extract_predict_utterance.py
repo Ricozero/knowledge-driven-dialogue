@@ -18,10 +18,10 @@ def extract_predict_utterance(sample_file, score_file, output_file):
     """
     convert_result_for_eval
     """
-    sample_list = [line.strip() for line in open(sample_file, 'r')]
-    score_list = [line.strip() for line in open(score_file, 'r')]
+    sample_list = [line.strip() for line in open(sample_file, 'r', encoding = 'utf-8')]
+    score_list = [line.strip() for line in open(score_file, 'r', encoding = 'utf-8')]
 
-    fout = open(output_file, 'w')
+    fout = open(output_file, 'w', encoding = 'utf-8')
     index = 0
     for i, sample in enumerate(sample_list):
         sample = json.loads(sample, encoding="utf-8", \
