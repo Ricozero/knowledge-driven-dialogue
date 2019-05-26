@@ -51,7 +51,7 @@ def model_config():
     net_arg.add_argument("--max_len", type=int, default=500)
     net_arg.add_argument("--num_layers", type=int, default=1)
     net_arg.add_argument("--attn", type=str, default='dot',
-                         choices=['none', 'mlp', 'dot', 'general'])
+                        choices=['none', 'mlp', 'dot', 'general'])
     net_arg.add_argument("--share_vocab", type=str2bool, default=True)
     net_arg.add_argument("--with_bridge", type=str2bool, default=True)
     net_arg.add_argument("--tie_embedding", type=str2bool, default=True)
@@ -89,9 +89,9 @@ def model_config():
     misc_arg.add_argument("--log_steps", type=int, default=100)
     misc_arg.add_argument("--valid_steps", type=int, default=200)
     misc_arg.add_argument("--batch_size", type=int, default=128)
-    misc_arg.add_argument("--ckpt", type=str)
+    misc_arg.add_argument("--ckpt", type=str)                                       # 从保存的模型的epoch开始训练（网络要一致）
     #misc_arg.add_argument("--ckpt", type=str, default="models/best.model")
-    misc_arg.add_argument("--check", action="store_true")
+    misc_arg.add_argument("--check", action="store_true")                           # 将文件保存在tmp而不是models
     misc_arg.add_argument("--test", action="store_true")
     misc_arg.add_argument("--interact", action="store_true")
     #misc_arg.add_argument("--interact", type=str2bool, default=True)
@@ -110,13 +110,14 @@ def main():
         config.save_dir = "./tmp/"
     config.use_gpu = torch.cuda.is_available() and config.gpu >= 0
     device = config.gpu
+    print("Using device:", device)
     torch.cuda.set_device(device)
     # Data definition
     corpus = KnowledgeCorpus(data_dir=config.data_dir, data_prefix=config.data_prefix,
-                             min_freq=0, max_vocab_size=config.max_vocab_size,
-                             min_len=config.min_len, max_len=config.max_len,
-                             embed_file=config.embed_file, with_label=config.with_label,
-                             share_vocab=config.share_vocab)
+                            min_freq=0, max_vocab_size=config.max_vocab_size,
+                            min_len=config.min_len, max_len=config.max_len,
+                            embed_file=config.embed_file, with_label=config.with_label,
+                            share_vocab=config.share_vocab)
     corpus.load()
     if config.test and config.ckpt:
         corpus.reload(data_type='test')
@@ -128,25 +129,25 @@ def main():
         config.batch_size, "test", shuffle=False, device=device)
     # Model definition
     model = KnowledgeSeq2Seq(src_vocab_size=corpus.SRC.vocab_size,
-                             tgt_vocab_size=corpus.TGT.vocab_size,
-                             embed_size=config.embed_size, hidden_size=config.hidden_size,
-                             padding_idx=corpus.padding_idx,
-                             num_layers=config.num_layers, bidirectional=config.bidirectional,
-                             attn_mode=config.attn, with_bridge=config.with_bridge,
-                             tie_embedding=config.tie_embedding, dropout=config.dropout,
-                             use_gpu=config.use_gpu, 
-                             use_bow=config.use_bow, use_dssm=config.use_dssm,
-                             use_pg=config.use_pg, use_gs=config.use_gs,
-                             pretrain_epoch=config.pretrain_epoch,
-                             use_posterior=config.use_posterior,
-                             weight_control=config.weight_control,
-                             concat=config.decode_concat)
+                            tgt_vocab_size=corpus.TGT.vocab_size,
+                            embed_size=config.embed_size, hidden_size=config.hidden_size,
+                            padding_idx=corpus.padding_idx,
+                            num_layers=config.num_layers, bidirectional=config.bidirectional,
+                            attn_mode=config.attn, with_bridge=config.with_bridge,
+                            tie_embedding=config.tie_embedding, dropout=config.dropout,
+                            use_gpu=config.use_gpu,
+                            use_bow=config.use_bow, use_dssm=config.use_dssm,
+                            use_pg=config.use_pg, use_gs=config.use_gs,
+                            pretrain_epoch=config.pretrain_epoch,
+                            use_posterior=config.use_posterior,
+                            weight_control=config.weight_control,
+                            concat=config.decode_concat)
     model_name = model.__class__.__name__
     # Generator definition
     generator = TopKGenerator(model=model,
-                              src_field=corpus.SRC, tgt_field=corpus.TGT, cue_field=corpus.CUE,
-                              max_length=config.max_dec_len, ignore_unk=config.ignore_unk, 
-			      length_average=config.length_average, use_gpu=config.use_gpu)
+                            src_field=corpus.SRC, tgt_field=corpus.TGT, cue_field=corpus.CUE,
+                            max_length=config.max_dec_len, ignore_unk=config.ignore_unk,
+                length_average=config.length_average, use_gpu=config.use_gpu)
     # Interactive generation testing
     if config.interact and config.ckpt:
         model.load(config.ckpt)
@@ -160,6 +161,7 @@ def main():
         print(metrics.report_cum())
         print("Generating ...")
         evaluate_generation(generator, test_iter, save_file=config.gen_file, verbos=True)
+    # Training
     else:
         # Load word embeddings
         if config.use_embed and config.embed_file is not None:
@@ -172,7 +174,7 @@ def main():
             model.parameters(), lr=config.lr)
         # Learning rate scheduler
         if config.lr_decay is not None and 0 < config.lr_decay < 1.0:
-            lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer=optimizer, 
+            lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer=optimizer,
                             factor=config.lr_decay, patience=1, verbose=True, min_lr=1e-5)
         else:
             lr_scheduler = None
@@ -195,11 +197,11 @@ def main():
         # Train
         logger.info("Training starts ...")
         trainer = Trainer(model=model, optimizer=optimizer, train_iter=train_iter,
-                          valid_iter=valid_iter, logger=logger, generator=generator,
-                          valid_metric_name="-loss", num_epochs=config.num_epochs,
-                          save_dir=config.save_dir, log_steps=config.log_steps,
-                          valid_steps=config.valid_steps, grad_clip=config.grad_clip,
-                          lr_scheduler=lr_scheduler, save_summary=False)
+                        valid_iter=valid_iter, logger=logger, generator=generator,
+                        valid_metric_name="-loss", num_epochs=config.num_epochs,
+                        save_dir=config.save_dir, log_steps=config.log_steps,
+                        valid_steps=config.valid_steps, grad_clip=config.grad_clip,
+                        lr_scheduler=lr_scheduler, save_summary=False)
         if config.ckpt is not None:
             trainer.load(file_prefix=config.ckpt)
         trainer.train()

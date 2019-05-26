@@ -266,8 +266,7 @@ class SrcTgtCorpus(Corpus):
         if self.filter_pred is not None:
             data = [ex for ex in data if self.filter_pred(ex)]
         filtered_num -= len(data)
-        print(
-            "Read {} {} examples ({} filtered)".format(len(data), data_type.upper(), filtered_num))
+        print("Read {} {} examples ({} filtered)".format(len(data), data_type.upper(), filtered_num))
         return data
 
 
@@ -327,7 +326,8 @@ class KnowledgeCorpus(Corpus):
 
     def read_data(self, data_file, data_type="train"):
         """
-        read_data
+        Return:
+            data: 字典列表
         """
         data = []
         with open(data_file, "r", encoding="utf-8") as f:
@@ -349,6 +349,5 @@ class KnowledgeCorpus(Corpus):
         if self.filter_pred is not None:
             data = [ex for ex in data if self.filter_pred(ex)]
         filtered_num -= len(data)
-        print(
-            "Read {} {} examples ({} filtered)".format(len(data), data_type.upper(), filtered_num))
+        print("Read {} {} examples ({} filtered)".format(len(data), data_type.upper(), filtered_num))
         return data
