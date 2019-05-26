@@ -114,10 +114,10 @@ def main():
     torch.cuda.set_device(device)
     # Data definition
     corpus = KnowledgeCorpus(data_dir=config.data_dir, data_prefix=config.data_prefix,
-                            min_freq=0, max_vocab_size=config.max_vocab_size,
-                            min_len=config.min_len, max_len=config.max_len,
-                            embed_file=config.embed_file, with_label=config.with_label,
-                            share_vocab=config.share_vocab)
+                             min_freq=0, max_vocab_size=config.max_vocab_size,
+                             min_len=config.min_len, max_len=config.max_len,
+                             embed_file=config.embed_file, with_label=config.with_label,
+                             share_vocab=config.share_vocab)
     corpus.load()
     if config.test and config.ckpt:
         corpus.reload(data_type='test')
@@ -129,24 +129,24 @@ def main():
         config.batch_size, "test", shuffle=False, device=device)
     # Model definition
     model = KnowledgeSeq2Seq(src_vocab_size=corpus.SRC.vocab_size,
-                            tgt_vocab_size=corpus.TGT.vocab_size,
-                            embed_size=config.embed_size, hidden_size=config.hidden_size,
-                            padding_idx=corpus.padding_idx,
-                            num_layers=config.num_layers, bidirectional=config.bidirectional,
-                            attn_mode=config.attn, with_bridge=config.with_bridge,
-                            tie_embedding=config.tie_embedding, dropout=config.dropout,
-                            use_gpu=config.use_gpu,
-                            use_bow=config.use_bow, use_dssm=config.use_dssm,
-                            use_pg=config.use_pg, use_gs=config.use_gs,
-                            pretrain_epoch=config.pretrain_epoch,
-                            use_posterior=config.use_posterior,
-                            weight_control=config.weight_control,
-                            concat=config.decode_concat)
+                             tgt_vocab_size=corpus.TGT.vocab_size,
+                             embed_size=config.embed_size, hidden_size=config.hidden_size,
+                             padding_idx=corpus.padding_idx,
+                             num_layers=config.num_layers, bidirectional=config.bidirectional,
+                             attn_mode=config.attn, with_bridge=config.with_bridge,
+                             tie_embedding=config.tie_embedding, dropout=config.dropout,
+                             use_gpu=config.use_gpu,
+                             use_bow=config.use_bow, use_dssm=config.use_dssm,
+                             use_pg=config.use_pg, use_gs=config.use_gs,
+                             pretrain_epoch=config.pretrain_epoch,
+                             use_posterior=config.use_posterior,
+                             weight_control=config.weight_control,
+                             concat=config.decode_concat)
     model_name = model.__class__.__name__
     # Generator definition
     generator = TopKGenerator(model=model,
-                            src_field=corpus.SRC, tgt_field=corpus.TGT, cue_field=corpus.CUE,
-                            max_length=config.max_dec_len, ignore_unk=config.ignore_unk,
+                              src_field=corpus.SRC, tgt_field=corpus.TGT, cue_field=corpus.CUE,
+                              max_length=config.max_dec_len, ignore_unk=config.ignore_unk,
                 length_average=config.length_average, use_gpu=config.use_gpu)
     # Interactive generation testing
     if config.interact and config.ckpt:
@@ -197,11 +197,11 @@ def main():
         # Train
         logger.info("Training starts ...")
         trainer = Trainer(model=model, optimizer=optimizer, train_iter=train_iter,
-                        valid_iter=valid_iter, logger=logger, generator=generator,
-                        valid_metric_name="-loss", num_epochs=config.num_epochs,
-                        save_dir=config.save_dir, log_steps=config.log_steps,
-                        valid_steps=config.valid_steps, grad_clip=config.grad_clip,
-                        lr_scheduler=lr_scheduler, save_summary=False)
+                          valid_iter=valid_iter, logger=logger, generator=generator,
+                          valid_metric_name="-loss", num_epochs=config.num_epochs,
+                          save_dir=config.save_dir, log_steps=config.log_steps,
+                          valid_steps=config.valid_steps, grad_clip=config.grad_clip,
+                          lr_scheduler=lr_scheduler, save_summary=False)
         if config.ckpt is not None:
             trainer.load(file_prefix=config.ckpt)
         trainer.train()

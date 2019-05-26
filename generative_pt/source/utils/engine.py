@@ -158,8 +158,7 @@ class Trainer(object):
             self.valid_writer = SummaryWriter(
                 os.path.join(self.save_dir, "logs", "valid"))
 
-        self.best_valid_metric = float(
-            "inf") if self.is_decreased_valid_metric else -float("inf")
+        self.best_valid_metric = float("inf") if self.is_decreased_valid_metric else -float("inf")
         self.epoch = 0
         self.batch_num = 0
 

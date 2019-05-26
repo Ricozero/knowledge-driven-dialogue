@@ -45,7 +45,7 @@ class Corpus(object):
 
     def load(self):
         """
-        load
+        加载.pt文件
         """
         if not (os.path.exists(self.prepared_data_file) and
                 os.path.exists(self.prepared_vocab_file)):
@@ -69,7 +69,7 @@ class Corpus(object):
 
     def load_data(self, prepared_data_file=None):
         """
-        load_data
+        加载.pt格式的语料
         """
         prepared_data_file = prepared_data_file or self.prepared_data_file
         print("Loading prepared data from {} ...".format(prepared_data_file))
@@ -82,7 +82,7 @@ class Corpus(object):
 
     def load_vocab(self, prepared_vocab_file):
         """
-        load_vocab
+        加载.pt格式的字典
         """
         prepared_vocab_file = prepared_vocab_file or self.prepared_vocab_file
         print("Loading prepared vocab from {} ...".format(prepared_vocab_file))
@@ -106,9 +106,7 @@ class Corpus(object):
 
     def build_vocab(self, data):
         """
-        Args
-        ----
-        data: ``List[Dict]``
+        从样本的src, tgt, cue分别生成字典
         """
         field_data_dict = {}
         for name in data[0].keys():
@@ -133,9 +131,7 @@ class Corpus(object):
 
     def build_examples(self, data):
         """
-        Args
-        ----
-        data: ``List[Dict]``
+        将样本的src, tgt, cue三个部分分别索引化
         """
         examples = []
         for raw_data in tqdm(data):
@@ -150,7 +146,8 @@ class Corpus(object):
 
     def build(self):
         """
-        build
+        加载样本并从样本生成字典和索引形式的语料
+        其中，字典是只通过训练集生成的
         """
         print("Start to build corpus!")
         train_file = os.path.join(self.data_dir, self.data_prefix + ".train")
@@ -326,8 +323,10 @@ class KnowledgeCorpus(Corpus):
 
     def read_data(self, data_file, data_type="train"):
         """
+        读取样本文件
+
         Return:
-            data: 字典列表
+            data: 字典列表，每个字典由src, tgt, cue组成，cue是个知识列表
         """
         data = []
         with open(data_file, "r", encoding="utf-8") as f:
